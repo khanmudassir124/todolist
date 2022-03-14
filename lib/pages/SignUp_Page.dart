@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:todolist/utils/colors.dart';
 import 'package:todolist/widgets/Text_Field.dart';
 
+import '../utils/Constant.dart';
 import '../widgets/Big_Text.dart';
 import '../widgets/Main_Button.dart';
 import '../widgets/Mid_Text.dart';
@@ -55,10 +56,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   child: TextFormField(
                                     obscureText: true,
                                     decoration: InputDecoration(
-                                      hintStyle: TextStyle(
-                                          color: Color.fromRGBO(0, 0, 0, 0.70),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 12),
+                                      hintStyle: Constant.inputBoxTextStyle,
                                       fillColor: Colors.white70,
                                       hintText: "Enter your Name",
                                       labelText: "Name",
@@ -83,10 +81,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   child: TextFormField(
                                     obscureText: true,
                                     decoration: InputDecoration(
-                                      hintStyle: TextStyle(
-                                          color: Color.fromRGBO(0, 0, 0, 0.70),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 12),
+                                      hintStyle: Constant.inputBoxTextStyle,
                                       fillColor: Colors.white70,
                                       hintText: "Enter your Email",
                                       labelText: "Email",
@@ -108,10 +103,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   child: TextFormField(
                                     obscureText: true,
                                     decoration: InputDecoration(
-                                      hintStyle: TextStyle(
-                                          color: Color.fromRGBO(0, 0, 0, 0.70),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 12),
+                                      hintStyle: Constant.inputBoxTextStyle,
                                       fillColor: Colors.white70,
                                       hintText: "Enter your password",
                                       labelText: "Password",
@@ -133,10 +125,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                   child: TextFormField(
                                     obscureText: true,
                                     decoration: InputDecoration(
-                                      hintStyle: TextStyle(
-                                          color: Color.fromRGBO(0, 0, 0, 0.70),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 12),
+                                      hintStyle: Constant.inputBoxTextStyle,
                                       fillColor: Colors.white70,
                                       hintText: "Confirm password",
                                       labelText: "Confirm Password",

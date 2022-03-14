@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:todolist/utils/Constant.dart';
 import 'package:todolist/utils/colors.dart';
 import 'package:todolist/widgets/Text_Field.dart';
 
@@ -57,10 +58,7 @@ class _SignInPageState extends State<SignInPage> {
                                   child: TextFormField(
                                     obscureText: true,
                                     decoration: InputDecoration(
-                                      hintStyle: TextStyle(
-                                          color: Color.fromRGBO(0, 0, 0, 0.70),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 12),
+                                      hintStyle: Constant.inputBoxTextStyle,
                                       fillColor: Colors.white70,
                                       hintText: "Enter your Email",
                                       labelText: "Email",
@@ -82,10 +80,7 @@ class _SignInPageState extends State<SignInPage> {
                                   child: TextFormField(
                                     obscureText: true,
                                     decoration: InputDecoration(
-                                      hintStyle: TextStyle(
-                                          color: Color.fromRGBO(0, 0, 0, 0.70),
-                                          fontFamily: 'Poppins',
-                                          fontSize: 12),
+                                      hintStyle: Constant.inputBoxTextStyle,
                                       fillColor: Colors.white70,
                                       hintText: "Enter your password",
                                       labelText: "Password",
@@ -136,7 +131,7 @@ class _SignInPageState extends State<SignInPage> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => SignUpPage()),
-                                    (Route<dynamic> route) => false,
+                                (Route<dynamic> route) => false,
                               );
                             },
                             child: MidText(
