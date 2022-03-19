@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:todolist/pages/todo_list.dart';
 import 'package:todolist/utils/colors.dart';
 import 'package:todolist/widgets/Text_Field.dart';
 
+import '../services/Api_Manager.dart';
 import '../utils/Constant.dart';
 import '../widgets/Big_Text.dart';
 import '../widgets/Main_Button.dart';
@@ -14,6 +18,23 @@ class SignUpPage extends StatefulWidget {
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
+}
+
+TextEditingController emailController = TextEditingController();
+TextEditingController passController = TextEditingController();
+TextEditingController nameController = TextEditingController();
+TextEditingController pass2Controller = TextEditingController();
+
+String? validateEmail(String? value) {
+  String pattern =
+      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+      r"{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+      r"{0,253}[a-zA-Z0-9])?)*$";
+  RegExp regex = RegExp(pattern);
+  if (value == null || value.isEmpty || !regex.hasMatch(value))
+    return 'Enter a valid email address';
+  else
+    return null;
 }
 
 class _SignUpPageState extends State<SignUpPage> {
@@ -54,7 +75,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 Container(
                                   margin: EdgeInsets.only(left: 20, right: 20),
                                   child: TextFormField(
-                                    obscureText: true,
+                                    controller: nameController,
                                     decoration: InputDecoration(
                                       hintStyle: Constant.inputBoxTextStyle,
                                       fillColor: Colors.white70,
@@ -79,7 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     top: 20,
                                   ),
                                   child: TextFormField(
-                                    obscureText: true,
+                                    controller: emailController,
                                     decoration: InputDecoration(
                                       hintStyle: Constant.inputBoxTextStyle,
                                       fillColor: Colors.white70,
@@ -89,12 +110,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                           borderRadius:
                                               BorderRadius.circular(10.0)),
                                     ),
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Please enter email';
-                                      }
-                                      return null;
-                                    },
+                                    validator: (value) => validateEmail(value),
                                   ),
                                 ),
                                 Container(
@@ -102,6 +118,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       top: 20, left: 20, right: 20),
                                   child: TextFormField(
                                     obscureText: true,
+                                    controller: passController,
                                     decoration: InputDecoration(
                                       hintStyle: Constant.inputBoxTextStyle,
                                       fillColor: Colors.white70,
@@ -114,6 +131,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return 'Please enter password';
+                                      } else if (pass2Controller.value !=
+                                          passController.value) {
+                                        return 'Both passwords are not same';
+                                      } else if (value.length < 8) {
+                                        return 'Both Should be greater than 8 char';
                                       }
                                       return null;
                                     },
@@ -124,6 +146,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                       top: 20, left: 20, right: 20),
                                   child: TextFormField(
                                     obscureText: true,
+                                    controller: pass2Controller,
                                     decoration: InputDecoration(
                                       hintStyle: Constant.inputBoxTextStyle,
                                       fillColor: Colors.white70,
@@ -136,6 +159,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return 'Please enter password';
+                                      } else if (pass2Controller.value !=
+                                          passController.value) {
+                                        return 'Both passwords are not same';
+                                      } else if (value.length < 8) {
+                                        return 'Both Should be greater than 8 char';
                                       }
                                       return null;
                                     },
@@ -149,8 +177,24 @@ class _SignUpPageState extends State<SignUpPage> {
                   Container(
                     margin: EdgeInsets.only(top: 30),
                     child: InkWell(
-                      onTap: () {
-                        if (_formKey.currentState!.validate()) {}
+                      onTap: () async {
+                        if (_formKey.currentState!.validate()) {
+                          // emailController.text
+
+                          var msg = await _SignUp(context);
+                          //print(msg);
+                          if (msg == true) {
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TodoList()),
+                              (Route<dynamic> route) => false,
+                            );
+                          }
+                          // else if (msg == false) {
+                          //   _showError();
+                          // }
+                        }
                       },
                       child: MainButton(text: "Sign Up"),
                     ),
@@ -181,5 +225,33 @@ class _SignUpPageState extends State<SignUpPage> {
                 ])),
           ],
         ));
+  }
+
+  _SignUp(BuildContext context) async {
+    try {
+      if (emailController.text.isNotEmpty &&
+          passController.text.isNotEmpty &&
+          pass2Controller.text.isNotEmpty &&
+          nameController.text.isNotEmpty &&
+          pass2Controller.text == passController.text) {
+        var data = {
+          'name': nameController.text,
+          'email': emailController.text,
+          'password': passController.text
+        };
+        var res = await API_Manager().login(data, 'register');
+        var body = jsonDecode(res.body);
+        print(res.statusCode);
+        print(body);
+        print(body['message']);
+        if (body['message'] == 'SUCCESS') {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } catch (e) {
+      //_showConnectionError();
+    }
   }
 }
