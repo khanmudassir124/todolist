@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist/pages/todo_list.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:todolist/utils/colors.dart';
 import 'package:todolist/widgets/Text_Field.dart';
 
@@ -20,25 +21,33 @@ class SignUpPage extends StatefulWidget {
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-TextEditingController emailController = TextEditingController();
-TextEditingController passController = TextEditingController();
-TextEditingController nameController = TextEditingController();
-TextEditingController pass2Controller = TextEditingController();
-
-String? validateEmail(String? value) {
-  String pattern =
-      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
-      r"{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]"
-      r"{0,253}[a-zA-Z0-9])?)*$";
-  RegExp regex = RegExp(pattern);
-  if (value == null || value.isEmpty || !regex.hasMatch(value))
-    return 'Enter a valid email address';
-  else
-    return null;
-}
-
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController pass2Controller = TextEditingController();
+
+  bool _isVisible = false;
+
+  String? validateEmail(String? value) {
+    String pattern =
+        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+        r"{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+        r"{0,253}[a-zA-Z0-9])?)*$";
+    RegExp regex = RegExp(pattern);
+    if (value == null || value.isEmpty || !regex.hasMatch(value))
+      return 'Enter a valid email address';
+    else
+      return null;
+  }
+
+  _showError() {
+    setState(() {
+      _isVisible = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,30 +183,40 @@ class _SignUpPageState extends State<SignUpPage> {
                       ],
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 30),
-                    child: InkWell(
-                      onTap: () async {
-                        if (_formKey.currentState!.validate()) {
-                          // emailController.text
+                  Stack(
+                    children: [
+                      Visibility(
+                        visible: _isVisible,
+                        child: MidText(
+                            text: "Email is Already Been Taken, Try Again...",
+                            color: Colors.red,
+                            size: 14),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 30),
+                        child: InkWell(
+                          onTap: () async {
+                            if (_formKey.currentState!.validate()) {
+                              // emailController.text
 
-                          var msg = await _SignUp(context);
-                          //print(msg);
-                          if (msg == true) {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TodoList()),
-                              (Route<dynamic> route) => false,
-                            );
-                          }
-                          // else if (msg == false) {
-                          //   _showError();
-                          // }
-                        }
-                      },
-                      child: MainButton(text: "Sign Up"),
-                    ),
+                              var msg = await _SignUp(context);
+                              //print(msg);
+                              if (msg == true) {
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => TodoList()),
+                                  (Route<dynamic> route) => false,
+                                );
+                              } else if (msg == false) {
+                                _showError();
+                              }
+                            }
+                          },
+                          child: MainButton(text: "Sign Up"),
+                        ),
+                      ),
+                    ],
                   ),
                   Container(
                       margin: EdgeInsets.only(top: 15),
@@ -246,7 +265,7 @@ class _SignUpPageState extends State<SignUpPage> {
         print(body['message']);
         if (body['message'] == 'SUCCESS') {
           return true;
-        } else {
+        } else if (body['message'] == 'The email has already been taken.') {
           return false;
         }
       }
